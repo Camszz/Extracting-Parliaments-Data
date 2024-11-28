@@ -27,9 +27,9 @@ class Scraper:
             print(f'Error: Config file {config}.json not found.')
             return None
 
-    def EUPARL_getJSON(self,
-                       mode : str,
-                       params : dict = {}) :
+    def get_data(self,
+                 mode : str,
+                 params : dict = {}) :
         """Basic function designed to request a specific data ('mode') from the EU parliament API with parameters ('params') in the request.
         It returns the JSON-formatted response body."""
         
