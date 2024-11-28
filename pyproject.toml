@@ -1,0 +1,23 @@
+[project]
+name = "LegiScraper"
+version = "0.0.1"
+authors = [
+  { name="Camille Dubois", email="camille.dubois@etu.minesparis.psl.eu" },
+  { name="Killian Varescon", email="killian.varescon@etu.minesparis.psl.eu" },
+  { name="Alejandro Jorba", email="alejandro.jorba@etu.minesparis.psl.eu" },
+]
+description = "LegiScraper is a package made for scraping easily the data from various parliaments"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/Camszz/Extracting-Parliaments-Data"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
