@@ -2,6 +2,7 @@
 
 import pandas as pd
 import os
+import numpy as np
 from time import sleep
 from tqdm import tqdm
 from multiprocessing import Pool, Manager
@@ -49,9 +50,9 @@ class MemberParliament:
             outputs_dict = manager.dict()
 
             with Pool(processes=os.cpu_count()) as pool:
-                for i, result in tqdm(enumerate(pool.imap_unordered(self.extract_add_infos, ids, chunksize=8)), total=len(ids), desc="Obtaining MEP's Data"):
-                    sleep(0.2)  # to avoid hitting the rate limiter
-
+                for i, result in tqdm(enumerate(pool.imap_unordered(self.extract_add_infos, ids, chunksize=2)), total=len(ids), desc="Obtaining MEP's Data"):
+                    
+                    sleep(np.random.uniform(0.5, 1))  # to avoid hitting the rate limiter
                     mp, bday, gender, citizenship, member_since, member_until = result
                     outputs_dict[i] = {'id': mp,
                                        'bday': bday,
