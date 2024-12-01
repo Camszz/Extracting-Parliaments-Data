@@ -34,7 +34,8 @@ class Scraper:
         It returns the JSON-formatted response body."""
         
         url = self.config['url'] + mode
-        response = rq.get(url=url, params=params)
+        headers = self.config['headers']
+        response = rq.get(url=url, params=params, headers=headers)
         try :
             return response.json()
         except :

@@ -6,10 +6,11 @@ import numpy as np
 from time import sleep
 from tqdm import tqdm
 from multiprocessing import Pool, Manager
+import random
+import string
 
 from src.LegiScraper.scraper import Scraper
 from .helpers import get_mandate
-
 
 class MemberParliament:
 
@@ -26,6 +27,7 @@ class MemberParliament:
 
         df_mps = self.extract_mps()
         df_add_infos = self.parallel_extract(df_mps['id'])
+        df = df_mps.set_index('id').join(df_add_infos)
 
         return df_add_infos
 
@@ -45,25 +47,46 @@ class MemberParliament:
         return df
 
     def parallel_extract(self, ids):
+        """
+        Extract additional information about Members of Parliament in parallel.
 
-        with Manager() as manager:
-            outputs_dict = manager.dict()
+        Args:
+            ids (list): List of IDs for the MPs.
 
-            with Pool(processes=os.cpu_count()) as pool:
-                for i, result in tqdm(enumerate(pool.imap_unordered(self.extract_add_infos, ids, chunksize=2)), total=len(ids), desc="Obtaining MEP's Data"):
-                    
-                    sleep(np.random.uniform(0.5, 1))  # to avoid hitting the rate limiter
-                    mp, bday, gender, citizenship, member_since, member_until = result
-                    outputs_dict[i] = {'id': mp,
-                                       'bday': bday,
-                                       'gender': gender,
-                                       'citizenship': citizenship,
-                                       'member_since': member_since,
-                                       'member_until': member_until}
-        
-        results_df = pd.DataFrame.from_dict(outputs_dict)
+        Returns:
+            dict: A dictionary where keys are indices and values are dictionaries
+                containing detailed information about each MP.
+        """
+        # Use a list to gather results
+        results = []
 
-        return results_df
+        # Create a multiprocessing pool
+        with Pool(processes=os.cpu_count()) as pool:
+            # Process IDs in parallel
+            for result in tqdm(
+                pool.imap_unordered(self.extract_add_infos, ids, chunksize=32),
+                total=len(ids),
+                desc="Obtaining MEP's Data"
+            ):
+                # Add a small sleep to avoid hitting the rate limiter
+                sleep(np.random.uniform(0.5, 1))
+
+                # Append the result to the results list
+                results.append(result)
+
+        # Convert results into a dictionary for final output
+        outputs_dict = {
+            i: {
+                'id': r[0],
+                'bday': r[1],
+                'gender': r[2],
+                'citizenship': r[3],
+                'member_since': r[4],
+                'member_until': r[5]
+            } for i, r in enumerate(results)
+        }
+
+        return pd.DataFrame(outputs_dict).T.set_index('id')
 
     
     def extract_add_infos(self, mp):
