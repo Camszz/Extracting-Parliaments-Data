@@ -12,19 +12,20 @@ from .helpers import read_config
 class Scraper:
     
     def __init__(self,
-                 config='base_eu'):
+                 config='base'):
         """Initialize the scraper object with the provided config."""
         
         self.config = read_config(config)
 
     def get_data(self,
-                 mode : str,
-                 params : dict = {}) :
-        """Basic function designed to request a specific data ('mode') from the EU parliament API with parameters ('params') in the request.
+                 data_request : str = '') :
+        """Basic function designed to request a specific data ('data_request') from
+        the EU parliament API with parameters ('params') in the request.
         It returns the JSON-formatted response body."""
         
-        url = self.config['url'] + mode
+        url = self.config['url'] + data_request
         headers = self.config['headers']
+        params = self.config['params']
         response = rq.get(url=url, params=params, headers=headers)
         try :
             return response.json()
