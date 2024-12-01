@@ -6,26 +6,16 @@ import json
 from tqdm import tqdm
 from time import sleep
 
+from .helpers import read_config
+
 
 class Scraper:
     
     def __init__(self,
-                 config='base'):
+                 config='base_eu'):
         """Initialize the scraper object with the provided config."""
         
-        self.config = self.get_config(config)
-
-    def get_config(self,
-                   config):
-        """Load the configuration file and return the corresponding settings."""
-        
-        try:
-            with open(f'../config/{config}.json', 'r') as file:
-                config = json.load(file)
-            return dict(config)
-        except FileNotFoundError:
-            print(f'Error: Config file {config}.json not found.')
-            return None
+        self.config = read_config(config)
 
     def get_data(self,
                  mode : str,

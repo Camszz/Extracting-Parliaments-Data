@@ -6,16 +6,14 @@ import numpy as np
 from time import sleep
 from tqdm import tqdm
 from multiprocessing import Pool, Manager
-import random
-import string
 
 from src.LegiScraper.scraper import Scraper
-from .helpers import get_mandate
+from .helpers import get_mandate, save_dataframe_to_folder
 
 class MemberParliament:
 
     def __init__(self,
-                 config='base'
+                 config='base_eu'
                  ):
         """Initialize the MemberParliament object."""
 
@@ -28,8 +26,8 @@ class MemberParliament:
         df_mps = self.extract_mps()
         df_add_infos = self.parallel_extract(df_mps['id'])
         df = df_mps.set_index('id').join(df_add_infos)
+        save_dataframe_to_folder(df, folder_path=self.scraper.config['output_folder'], file_name='mps_data.csv')
 
-        return df_add_infos
 
     def extract_mps(self,):
 
