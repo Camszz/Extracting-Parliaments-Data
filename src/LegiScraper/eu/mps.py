@@ -5,22 +5,20 @@ import os
 import numpy as np
 from time import sleep
 from tqdm import tqdm
-from multiprocessing import Pool, Manager
-import random
-import string
+from multiprocessing import Pool
 
-from src.LegiScraper.scraper import Scraper
-from .helpers import get_mandate
+from ..scraper import Scraper
+from .helpers import get_mandate, save_dataframe_to_folder
 
 class MemberParliament:
 
     def __init__(self,
-                 config='base'
+                 config='base_mps'
                  ):
         """Initialize the MemberParliament object."""
 
         self.scraper = Scraper(config=config)
-        self.params = {"format" : "application/ld+json"}
+        self.params = self.scraper.config['params']
 
     def run(self,):
         """Run the extraction and processing pipeline."""
@@ -28,12 +26,12 @@ class MemberParliament:
         df_mps = self.extract_mps()
         df_add_infos = self.parallel_extract(df_mps['id'])
         df = df_mps.set_index('id').join(df_add_infos)
+        save_dataframe_to_folder(df, folder_path=self.scraper.config['output_folder'], file_name='mps_data.csv')
 
-        return df_add_infos
 
     def extract_mps(self,):
 
-        json_data = self.scraper.get_data(mode='meps/show-current', params=self.params)
+        json_data = self.scraper.get_data(data_request='meps/show-current')
         
         df = pd.json_normalize(json_data['data'])
         df = df[['identifier', 'givenName', 'familyName', 'api:political-group', 'api:country-of-representation']]
@@ -91,8 +89,8 @@ class MemberParliament:
     
     def extract_add_infos(self, mp):
                 
-        mode = f'meps/{mp}'
-        data = self.scraper.get_data(mode, self.params)['data'][0]
+        data_request = f'meps/{mp}'
+        data = self.scraper.get_data(data_request=data_request)['data'][0]
         bday = data['bday']
         gender = data['hasGender'].split('/')[-1]
         citizenship = data['citizenship'].split('/')[-1]

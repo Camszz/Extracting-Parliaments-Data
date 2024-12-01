@@ -1,0 +1,8 @@
+{
+    "url": "https://howtheyvote.eu/api/votes",
+    "headers": {
+        "Accept": "application/json"},
+    "params": {
+        "page" : 1,
+        "page_size" : 100}
+}

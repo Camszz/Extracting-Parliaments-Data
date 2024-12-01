@@ -9,3 +9,4 @@ src/LegiScraper.egg-info/top_level.txt
 src/LegiScraper/eu/__init__.py
 src/LegiScraper/eu/helpers.py
 src/LegiScraper/eu/mps.py
+src/LegiScraper/eu/votes.py
