@@ -1,7 +1,9 @@
 README.md
 pyproject.toml
 src/LegiScraper/__init__.py
+src/LegiScraper/helpers.py
 src/LegiScraper/scraper.py
+src/LegiScraper/topic_classifier.py
 src/LegiScraper.egg-info/PKG-INFO
 src/LegiScraper.egg-info/SOURCES.txt
 src/LegiScraper.egg-info/dependency_links.txt

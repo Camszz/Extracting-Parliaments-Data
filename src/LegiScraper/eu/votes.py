@@ -27,3 +27,4 @@ class Votes:
         df = df.dropna(subset='reference')
         votes_to_extract = df[df['reference'].str.contains(r'[a-zA-Z]10-')][['id', 'timestamp', 'display_title', 'description', 'reference']]
         return votes_to_extract
+    
