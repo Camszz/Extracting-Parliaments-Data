@@ -3,6 +3,12 @@
 *.py[cod]
 __pycache__
 
+# Data
+
+data
+data/
+.csv
+
 # Temp files
 .*.sw[po]
 *~

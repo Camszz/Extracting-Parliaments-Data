@@ -1,5 +1,6 @@
 import json
 import os
+import pandas as pd
 
 def read_config(selected_config: str, config_folder: str = "../config") -> dict:
     """
@@ -38,3 +39,28 @@ def read_config(selected_config: str, config_folder: str = "../config") -> dict:
             merged_data.update(data)
     
     return merged_data
+
+def split_col(col, k):
+    return pd.DataFrame(col.tolist(), columns=[f'keyword_{k}', f'prob_{k}'], index=col.index)
+
+def keywords_convert(keywords, prob=False):
+
+    """
+    Converts the KeyBERT's output format into a DataFrame.
+    
+    Parameters:
+    - keywords: List of tuples containing keywords and their scores
+    """
+    keywords = pd.DataFrame(keywords)
+
+    new_res = []
+    for col in keywords.columns:
+        new_res.append(split_col(keywords[col], k=col))
+    
+    df = pd.concat(new_res, axis=1)
+
+    if not prob:
+        selected_cols = df.columns[df.columns.str.contains('prob')]
+        df = df.drop(columns=selected_cols)
+
+    return df
