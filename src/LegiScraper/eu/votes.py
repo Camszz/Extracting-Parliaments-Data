@@ -21,9 +21,10 @@ class Votes:
         self.topic_analyzer = TopicAnalyzer(config=config)
     
     def run(self,):
-        votes_to_extract = self.extract_votes()
-        topics = self.topic_analysis(votes_to_extract)
-        votes = pd.concat([votes_to_extract, topics], axis=1)
+        votes_to_extract = self.extract_votes().infer_objects()
+        keywords, topics = self.topic_analysis(votes_to_extract.drop_duplicates(subset='display_title'))
+        topic_res = pd.concat([keywords, topics], axis=1).set_index('sequence')
+        votes = votes_to_extract.set_index('display_title').join(topic_res, validate='m:1').reset_index()
         save_dataframe_to_folder(votes, folder_path=self.scraper.config['output_folder'], file_name='votes.csv')
 
     def extract_votes(self,):
@@ -36,6 +37,4 @@ class Votes:
         keywords = self.topic_analyzer.extract_keywords(votes['display_title'])
         topics = self.topic_analyzer.topic_classifier(votes['display_title'])
 
-        return pd.concat([keywords, topics], axis=1)
-
-    
+        return keywords, topics

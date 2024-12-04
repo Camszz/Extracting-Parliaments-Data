@@ -34,15 +34,15 @@ class TopicAnalyzer:
             params['use_mmr'] = params['use_mmr'] == 'True'
             params['keyphrase_ngram_range'] = tuple(params['keyphrase_ngram_range'])
 
-        keywords_list = self.model.extract_keywords(
+        keywords = self.model.extract_keywords(
             votes.tolist(),
             **params
         )
 
-        keywords_df = keywords_convert(keywords_list)
+        keywords = keywords_convert(keywords)
         
-        return keywords_df
-    
+        return keywords
+
     def init_classifier(self, model="facebook/bart-large-mnli"):
         if torch.backends.mps.is_available():
             device = torch.device("mps")
@@ -57,7 +57,9 @@ class TopicAnalyzer:
         votes = votes.tolist()
         topics = self.params['topics']
         votes_topic = self.classifier(votes, topics, multi_label=False)
-        votes_topic = [sentence['labels'][:2] for sentence in votes_topic]
-        return pd.DataFrame(votes_topic, columns=['topic_1', 'topic_2'])
+        topics_res = [sentence['labels'][:2] for sentence in votes_topic]
+        sequences = pd.DataFrame(votes_topic)['sequence']
+        res = pd.DataFrame(topics_res, columns=['topic_1', 'topic_2'])
+        return pd.concat([sequences, res], axis=1)
 
 
