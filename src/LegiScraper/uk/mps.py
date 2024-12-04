@@ -9,7 +9,7 @@ from multiprocessing import Pool
 
 from ..scraper import Scraper
 from ..helpers import save_dataframe_to_folder
-from .helpers import get_mandate
+from .helpers import unpack_chunk
 
 class MemberParliament:
 
@@ -24,26 +24,20 @@ class MemberParliament:
     def run(self,):
         """Run the extraction and processing pipeline."""
 
-        df_mps = self.extract_mps()
-        df_add_infos = self.parallel_extract(df_mps['id'])
-        df = df_mps.set_index('id').join(df_add_infos)
+        df = self.extract_mps()
         save_dataframe_to_folder(df, folder_path=self.scraper.config['output_folder'], file_name='mps_data.csv')
 
+    def scrap_batch(self, batch):
+        return self.scraper.get_data(data_request='Search', params={"skip": batch})
 
     def extract_mps(self,):
 
-        json_data = self.scraper.get_data(data_request='meps/show-current')
-        
-        df = pd.json_normalize(json_data['data'])
-        df = df[['identifier', 'givenName', 'familyName', 'api:political-group', 'api:country-of-representation']]
-        rename = {'identifier' : 'id',
-          'givenName' : 'first_name',
-          'familyName' : 'last_name',
-          'api:political-group' : 'eu-parl-group',
-          'api:country-of-representation' : 'country-representation'}
-        df = df.rename(columns=rename)
+        n_mps = self.scraper.get_data(data_request='Search')['totalResults']
+        batches_id = np.arange(0, n_mps, 20)
 
-        return df
+        batch_res = list(map(self.scrap_batch, batches_id))
+        
+        return pd.concat(map(unpack_chunk, batch_res))
 
     def parallel_extract(self, ids):
         """
@@ -86,16 +80,3 @@ class MemberParliament:
         }
 
         return pd.DataFrame(outputs_dict).T.set_index('id')
-
-    
-    def extract_add_infos(self, mp):
-                
-        data_request = f'meps/{mp}'
-        data = self.scraper.get_data(data_request=data_request)['data'][0]
-        bday = data['bday']
-        gender = data['hasGender'].split('/')[-1]
-        citizenship = data['citizenship'].split('/')[-1]
-
-        member_since, member_until = get_mandate(data)
-
-        return mp, bday, gender, citizenship, member_since, member_until

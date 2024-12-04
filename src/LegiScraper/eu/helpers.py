@@ -23,16 +23,3 @@ def get_mandate(data):
 
     return member_since, member_until
 
-
-def save_dataframe_to_folder(df, folder_path, file_name):
-    # Check if the folder exists, if not, create it
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
-        print(f"Folder '{folder_path}' created.")
-    
-    # Construct the file path
-    file_path = os.path.join(folder_path, file_name)
-    
-    # Save the DataFrame to the folder
-    df.to_csv(file_path, index=False)
-    print(f"DataFrame saved to {file_path}")

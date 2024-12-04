@@ -18,14 +18,18 @@ class Scraper:
         self.config = read_config(config)
 
     def get_data(self,
-                 data_request : str = '') :
+                 data_request : str = '',
+                 params: dict = {}):
         """Basic function designed to request a specific data ('data_request') from
         the EU parliament API with parameters ('params') in the request.
         It returns the JSON-formatted response body."""
         
         url = self.config['url'] + data_request
         headers = self.config['headers']
-        params = self.config['params']
+
+        if params == {}:
+            params = self.config['params']
+
         response = rq.get(url=url, params=params, headers=headers)
         try :
             return response.json()

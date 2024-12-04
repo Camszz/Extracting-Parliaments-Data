@@ -7,7 +7,7 @@ from time import sleep
 import numpy as np
 
 from ..scraper import Scraper
-from .helpers import save_dataframe_to_folder
+from ..helpers import save_dataframe_to_folder
 from ..topic_classifier import TopicAnalyzer
 
 class Votes:
