@@ -1,7 +1,6 @@
 import pandas as pd
 
 
-
 def unpack(data):
     return pd.json_normalize(data['value'], sep='_')
 

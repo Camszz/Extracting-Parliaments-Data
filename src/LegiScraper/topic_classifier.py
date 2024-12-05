@@ -2,6 +2,8 @@ import pandas as pd
 from keybert import KeyBERT
 from transformers import pipeline
 import torch
+from datasets import Dataset
+from tqdm import tqdm
 
 from.helpers import read_config, keywords_convert
 
@@ -43,7 +45,7 @@ class TopicAnalyzer:
         
         return keywords
 
-    def init_classifier(self, model="facebook/bart-large-mnli"):
+    def init_classifier(self, model="MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli"):
         if torch.backends.mps.is_available():
             device = torch.device("mps")
         elif torch.cuda.is_available():
@@ -56,7 +58,12 @@ class TopicAnalyzer:
 
         votes = votes.tolist()
         topics = self.params['topics']
-        votes_topic = self.classifier(votes, topics, multi_label=False)
+
+        votes_topic = []
+
+        for out in self.classifier(votes, topics, batch_size=32, multi_label=False):
+            votes_topic.append(out)
+        
         topics_res = [sentence['labels'][:2] for sentence in votes_topic]
         sequences = pd.DataFrame(votes_topic)['sequence']
         res = pd.DataFrame(topics_res, columns=['topic_1', 'topic_2'])
