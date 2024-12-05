@@ -28,7 +28,7 @@ class Votes:
         keywords, topics = self.topic_analysis(votes_to_extract.drop_duplicates(subset='Title'))
         topic_res = pd.concat([keywords, topics], axis=1).set_index('sequence')
         votes = votes_to_extract.set_index('Title').join(topic_res, validate='m:1').reset_index()
-        save_dataframe_to_folder(votes, folder_path=self.scraper.config['output_folder'], file_name='votes.csv')
+        save_dataframe_to_folder(votes, folder_path=self.scraper.config['output_folder'], file_name='votes_uk.csv')
 
     def scrap_batch(self, batch):
         

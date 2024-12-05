@@ -1,6 +1,9 @@
 import json
 import os
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 def read_config(selected_config: str, config_folder: str = "../config") -> dict:
     """
@@ -66,6 +69,9 @@ def keywords_convert(keywords, prob=False):
     return df
 
 def save_dataframe_to_folder(df, folder_path, file_name):
+    
+    logger.info(f'Saving dataframe to {folder_path + file_name}...')
+
     # Check if the folder exists, if not, create it
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -77,4 +83,6 @@ def save_dataframe_to_folder(df, folder_path, file_name):
     # Save the DataFrame to the folder
     df.to_csv(file_path, index=False)
     print(f"DataFrame saved to {file_path}")
+
+    logger.log(f'DataFrame succesfuly saved !')
 

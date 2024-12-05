@@ -26,8 +26,8 @@ class MemberParliament:
 
         df_mps = self.extract_mps()
         df_add_infos = self.parallel_extract(df_mps['id'])
-        df = df_mps.set_index('id').join(df_add_infos)
-        save_dataframe_to_folder(df, folder_path=self.scraper.config['output_folder'], file_name='mps_data.csv')
+        df = df_mps.set_index('id').join(df_add_infos).reset_index()
+        save_dataframe_to_folder(df, folder_path=self.scraper.config['output_folder'], file_name='mps_data_eu.csv')
 
 
     def extract_mps(self,):
