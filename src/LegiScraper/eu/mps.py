@@ -8,7 +8,8 @@ from tqdm import tqdm
 from multiprocessing import Pool
 
 from ..scraper import Scraper
-from .helpers import get_mandate, save_dataframe_to_folder
+from ..helpers import save_dataframe_to_folder
+from .helpers import get_mandate
 
 class MemberParliament:
 
