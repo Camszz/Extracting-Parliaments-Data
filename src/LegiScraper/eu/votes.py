@@ -25,7 +25,7 @@ class Votes:
         keywords, topics = self.topic_analysis(votes_to_extract.drop_duplicates(subset='display_title'))
         topic_res = pd.concat([keywords, topics], axis=1).set_index('sequence')
         votes = votes_to_extract.set_index('display_title').join(topic_res, validate='m:1').reset_index()
-        save_dataframe_to_folder(votes, folder_path=self.scraper.config['output_folder'], file_name='votes.csv')
+        save_dataframe_to_folder(votes, folder_path=self.scraper.config['output_folder'], file_name='votes_eu.csv')
 
     def extract_votes(self,):
         df = pd.json_normalize(self.scraper.get_data()['results'])

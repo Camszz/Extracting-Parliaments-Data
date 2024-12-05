@@ -25,7 +25,7 @@ class MemberParliament:
         """Run the extraction and processing pipeline."""
 
         df = self.extract_mps()
-        save_dataframe_to_folder(df, folder_path=self.scraper.config['output_folder'], file_name='mps_data.csv')
+        save_dataframe_to_folder(df, folder_path=self.scraper.config['output_folder'], file_name='mps_data_uk.csv')
 
     def scrap_batch(self, batch):
         return self.scraper.get_data(data_request='Search', params={"skip": batch})
