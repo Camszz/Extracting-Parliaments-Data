@@ -4,8 +4,11 @@ from transformers import pipeline
 import torch
 from datasets import Dataset
 from tqdm import tqdm
+import logging
 
 from.helpers import read_config, keywords_convert
+
+logger = logging.getLogger(__name__)
 
 
 class TopicAnalyzer:
@@ -54,7 +57,11 @@ class TopicAnalyzer:
             device = -1
         self.classifier = pipeline("zero-shot-classification", model=model, device=device)
 
+        logger.info("Initialized classifier for topic classification")
+
     def topic_classifier(self, votes):
+
+        logger.info("Starting topic classification...")
 
         votes = votes.tolist()
         topics = self.params['topics']
@@ -67,6 +74,9 @@ class TopicAnalyzer:
         topics_res = [sentence['labels'][:2] for sentence in votes_topic]
         sequences = pd.DataFrame(votes_topic)['sequence']
         res = pd.DataFrame(topics_res, columns=['topic_1', 'topic_2'])
+
+        logger.info("Finished topic classification !")
+        
         return pd.concat([sequences, res], axis=1)
 
 

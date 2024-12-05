@@ -1,0 +1,25 @@
+{
+    "data": {
+        "votes": {
+            "module": "votes",
+            "class": "Votes",
+            "config": "votes"
+        },
+        "members_of_parliament": {
+            "module": "mps",
+            "class": "MemberParliament",
+            "config": "mps"
+        }
+    },
+    "organizations": {
+        "uk": {
+            "module": "uk",
+            "config": "uk"
+        },
+        "eu": {
+            "module": "eu",
+            "config": "eu"
+            }
+    }
+
+}
