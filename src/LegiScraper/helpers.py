@@ -84,5 +84,5 @@ def save_dataframe_to_folder(df, folder_path, file_name):
     df.to_csv(file_path, index=False)
     print(f"DataFrame saved to {file_path}")
 
-    logger.log(f'DataFrame succesfuly saved !')
+    logger.info(f'DataFrame succesfuly saved !')
 

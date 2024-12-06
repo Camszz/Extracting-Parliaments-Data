@@ -20,4 +20,4 @@ In a notebook, do the following :
 
     db = Database(config='database')
 
-Once you'll execute the above command, the Database class will automatically start scraping data while keeping you updated using the logger. 
+Once you'll execute the above command, the Database class will automatically start scraping data while keeping you updated using the logger.
