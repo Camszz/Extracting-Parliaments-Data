@@ -52,7 +52,7 @@ class TopicAnalyzer:
         if torch.backends.mps.is_available():
             device = torch.device("mps")
         elif torch.cuda.is_available():
-            device = torch.device("gpu")
+            device = torch.device("cuda")
         else:
             device = -1
         self.classifier = pipeline("zero-shot-classification", model=model, device=device)
