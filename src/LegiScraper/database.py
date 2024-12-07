@@ -5,6 +5,7 @@ from importlib import import_module
 import logging
 
 from .helpers import read_config
+from .db_unify import process_MPsRaw, process_VotesRaw, process_MemberVotesRaw
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -17,6 +18,14 @@ class Database:
         
         self.config = read_config(config)
         self.create_datasets()
+        self.merge_datasets()
+
+    def __init__(self,
+                 config : str,
+                 mode : str):
+        self.config = read_config(config)
+        if mode == 'merge':
+            self.merge_datasets()
     
     def init_scraper(self, organization, data_key):
 
@@ -45,4 +54,23 @@ class Database:
                 logger.info(f"Running scraper for {org} with data '{data_key}'")
                 scraper.run()
 
+    def merge_datasets(self):
 
+        dicf_MPs_raw = {}
+        dicf_votes_raw = {}
+        dicf_memberVotes_raw = {}
+
+        logger.info("Merging datasets")
+        for org in self.config['organizations'].keys():
+            dicf_MPs_raw[org] = pd.read_csv(f"../data/output/mps_data_{org.lower()}.csv")
+            dicf_votes_raw[org] = pd.read_csv(f"../data/output/votes_{org.lower()}.csv")
+            if org.upper() == 'UK':
+                dicf_memberVotes_raw[org] = pd.read_csv(f"../data/output/votes_{org.lower()}.csv")
+            else :
+                dicf_memberVotes_raw[org] = pd.read_csv(f"../data/output/member_votes_{org.lower()}.csv")
+        
+        process_MPsRaw(dicf_MPs_raw)
+        process_VotesRaw(dicf_votes_raw)
+        process_MemberVotesRaw(dicf_memberVotes_raw)
+
+        logger.info("Datasets merged : data/output/postprocess")
