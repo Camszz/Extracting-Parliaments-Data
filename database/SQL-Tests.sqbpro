@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="main.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="2140"/><column_width id="4" width="0"/><expanded_item id="0" parent="0"/><expanded_item id="1" parent="0"/><expanded_item id="0" parent="1"/><expanded_item id="0" parent="0"/><expanded_item id="1" parent="0"/><expanded_item id="2" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="members_parliaments" custom_title="0" dock_id="2" table="4,19:mainmembers_parliaments"/><dock_state state="000000ff00000000fd00000001000000020000042200000340fc0100000001fc00000000000004220000011e00fffffffa000000010100000002fb000000160064006f0063006b00420072006f00770073006500310000000000ffffffff0000000000000000fb000000160064006f0063006b00420072006f00770073006500320100000000ffffffff0000011e00ffffff000004220000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="member_votes" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="51"/><column index="2" value="42"/><column index="3" value="53"/><column index="4" value="70"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="members_parliaments" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort><column index="0" mode="0"/></sort><column_widths><column index="1" value="70"/><column index="2" value="55"/><column index="3" value="151"/><column index="4" value="231"/><column index="5" value="123"/><column index="6" value="87"/><column index="7" value="87"/><column index="8" value="53"/><column index="9" value="48"/><column index="10" value="87"/><column index="11" value="68"/><column index="12" value="140"/><column index="13" value="215"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="votes" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort><column index="10" mode="0"/></sort><column_widths><column index="1" value="56"/><column index="2" value="296"/><column index="3" value="118"/><column index="4" value="108"/><column index="5" value="83"/><column index="6" value="87"/><column index="7" value="136"/><column index="8" value="136"/><column index="9" value="69"/><column index="10" value="97"/><column index="11" value="78"/><column index="12" value="82"/><column index="13" value="71"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="votes_backup" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort><column index="8" mode="1"/></sort><column_widths><column index="1" value="51"/><column index="2" value="300"/><column index="3" value="159"/><column index="4" value="151"/><column index="5" value="119"/><column index="6" value="119"/><column index="7" value="199"/><column index="8" value="199"/><column index="9" value="59"/><column index="10" value="84"/><column index="11" value="70"/><column index="12" value="71"/><column index="13" value="63"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">UPDATE votes
+SET
+    ForCount = subquery.for_count,
+    AgainstCount = subquery.against_count
+FROM (
+    SELECT
+        vote_id,
+		parliament,
+        ForCount AS for_count,
+        AgainstCount AS against_count
+    FROM
+        votes_backup
+) AS subquery
+WHERE
+    votes.vote_id = subquery.vote_id AND
+	votes.parliament = subquery.parliament;</sql><sql name="SQL 2">--- Adding ForCounts to EU votes
+UPDATE votes
+SET
+    ForCount = subquery.for_count,
+    AgainstCount = subquery.against_count
+FROM (
+    SELECT
+        vote_id,
+        SUM(CASE WHEN position = 'FOR' THEN 1 ELSE 0 END) AS for_count,
+        SUM(CASE WHEN position = 'AGAINST' THEN 1 ELSE 0 END) AS against_count
+    FROM
+        member_votes
+	WHERE member_votes.parliament = 'EU'
+    GROUP BY
+        vote_id
+) AS subquery
+WHERE
+    votes.vote_id = subquery.vote_id AND
+	votes.parliament = 'EU';</sql><sql name="SQL 5*">--- isActive but not member anymore ?
+SELECT COUNT(*) as total
+FROM members_parliaments
+WHERE isActive = 'True' AND memberUntil &lt; &quot;2024-12-01&quot; AND parliament='UK'
+</sql><sql name="SQL 4*">--- Checking missing MEPs to have a membersVotes to membersParliaments foreign key
+SELECT COUNT(DISTINCT(MP_id)) as missing_eu_meps
+FROM member_votes
+WHERE member_votes.MP_id NOT IN (SELECT id FROM members_parliaments) AND member_votes.parliament = 'EU'</sql><sql name="SQL 8*">--- Stats of missing values in the members_parliaments table
+SELECT
+	parliament,
+    SUM(CASE WHEN id IS NULL THEN 1 ELSE 0 END) AS id,
+    SUM(CASE WHEN firstName IS NULL THEN 1 ELSE 0 END) AS firstName,
+    SUM(CASE WHEN lastName IS NULL THEN 1 ELSE 0 END) AS lastName,
+	SUM(CASE WHEN politicalGroup IS NULL THEN 1 ELSE 0 END) AS politicalGroup,
+	SUM(CASE WHEN politicalGroup_short IS NULL THEN 1 ELSE 0 END) AS politicalGroup_short,
+	SUM(CASE WHEN isActive IS &quot;True&quot; THEN 1 ELSE 0 END) AS isActive,
+	SUM(CASE WHEN memberUntil IS NULL THEN 1 ELSE 0 END) AS memberUntil,
+	SUM(CASE WHEN birthday IS NULL THEN 1 ELSE 0 END) AS birthday,
+	COUNT(id) AS total
+FROM
+    members_parliaments
+GROUP BY parliament;</sql><sql name="SQL 9*">--- How did french representatives vote when the resolution contained &quot;Ukraine&quot; as a keyword ?
+
+SELECT
+100*SUM(CASE WHEN position IS 'FOR' THEN 1 ELSE 0 END)/COUNT(*) AS &quot;for&quot;,
+100*SUM(CASE WHEN position IS 'AGAINST' THEN 1 ELSE 0 END)/COUNT(*) AS against,
+100*SUM(CASE WHEN (position IS 'ABSTENTION') OR (position IS 'DID_NOT_VOTE') THEN 1 ELSE 0 END)/COUNT(*) AS NA,
+members_parliaments.politicalGroup_short AS &quot;group&quot;
+FROM member_votes
+JOIN members_parliaments
+ON members_parliaments.id = member_votes.MP_id
+JOIN votes
+ON votes.vote_id = member_votes.vote_id
+WHERE members_parliaments.countryRepresentation = 'FR' AND (votes.keyword_0 = 'ukraine' OR votes.keyword_1 = 'ukraine' OR votes.keyword_2 = 'ukraine')
+GROUP BY members_parliaments.politicalGroup_short
+</sql><current_tab id="5"/></tab_sql></sqlb_project>
