@@ -6,10 +6,14 @@ from tqdm import tqdm
 from time import sleep
 import numpy as np
 import time
+import logging
 
 from ..scraper import Scraper
 from ..helpers import save_dataframe_to_folder
 from ..topic_classifier import TopicAnalyzer
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class Votes:
 
@@ -23,9 +27,15 @@ class Votes:
 
     def run(self,):
         """Run the extraction and processing pipeline."""
+
+        logger.info("Running votes extraction and processing pipeline")
        
         votes_to_extract = self.extract_votes().infer_objects()
+        logger.info("Votes successfuly extracted. Running topic analysis...")
+
         keywords, topics = self.topic_analysis(votes_to_extract.drop_duplicates(subset='Title'))
+        logger.info("Topic analysis successfuly done.")
+
         topic_res = pd.concat([keywords, topics], axis=1).set_index('sequence')
         votes = votes_to_extract.set_index('Title').join(topic_res, validate='m:1').reset_index()
         save_dataframe_to_folder(votes, folder_path=self.scraper.config['output_folder'], file_name='votes_uk.csv')
@@ -51,10 +61,7 @@ class Votes:
     def topic_analysis(self, votes):
         """Perform topic analysis on the votes."""
 
-        print(time.localtime())
         keywords = self.topic_analyzer.extract_keywords(votes['Title'])
-        print(time.localtime())
         topics = self.topic_analyzer.topic_classifier(votes['Title'])
-        print(time.localtime())
 
         return keywords, topics

@@ -19,13 +19,6 @@ class Database:
         self.config = read_config(config)
         self.create_datasets()
         self.merge_datasets()
-
-    def __init__(self,
-                 config : str,
-                 mode : str):
-        self.config = read_config(config)
-        if mode == 'merge':
-            self.merge_datasets()
     
     def init_scraper(self, organization, data_key):
 
