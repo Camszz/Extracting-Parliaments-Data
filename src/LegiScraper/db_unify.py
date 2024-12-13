@@ -74,7 +74,7 @@ def process_MEUPsRaw(df_MEUPs_raw: pd.DataFrame):
         'first_name': 'firstName',
         'last_name': 'lastName',
         'eu-parl-group': 'politicalGroup_short',
-        'bday': 'birthday',
+        # 'bday': 'birthday',
         'country-representation': 'countryRepresentation',
     }
     df_MEUPs = df_MEUPs.rename(columns=name)
@@ -87,8 +87,12 @@ def process_MEUPsRaw(df_MEUPs_raw: pd.DataFrame):
     df_MEUPs['parliament'] = 'EP'
 
     # Select relevant columns
+    # df_MEUPs = df_MEUPs[['parliament', 'id', 'firstName', 'lastName', 'politicalGroup_short', 'memberSince',
+    #                      'memberUntil', 'isActive', 'gender', 'birthday', 'citizenship', 'countryRepresentation']]
+    
     df_MEUPs = df_MEUPs[['parliament', 'id', 'firstName', 'lastName', 'politicalGroup_short', 'memberSince',
-                         'memberUntil', 'isActive', 'gender', 'birthday', 'citizenship', 'countryRepresentation']]
+                         'memberUntil', 'isActive', 'gender', 'citizenship', 'countryRepresentation']]
+    
 
     # Standardize gender values
     df_MEUPs['gender'][df_MEUPs['gender'] == 'MALE'] = 'M'

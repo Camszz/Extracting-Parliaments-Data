@@ -77,7 +77,7 @@ class MemberParliament:
         outputs_dict = {
             i: {
                 'id': r[0],
-                'bday': r[1],
+#                'bday': r[1],
                 'gender': r[2],
                 'citizenship': r[3],
                 'member_since': r[4],
@@ -92,10 +92,11 @@ class MemberParliament:
                 
         data_request = f'meps/{mp}'
         data = self.scraper.get_data(data_request=data_request)['data'][0]
-        bday = data['bday']
+        #bday = data['bday']
         gender = data['hasGender'].split('/')[-1]
         citizenship = data['citizenship'].split('/')[-1]
 
         member_since, member_until = get_mandate(data)
 
-        return mp, bday, gender, citizenship, member_since, member_until
+        #return mp, bday, gender, citizenship, member_since, member_until
+        return mp, gender, citizenship, member_since, member_until
