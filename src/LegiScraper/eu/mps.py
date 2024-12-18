@@ -78,10 +78,10 @@ class MemberParliament:
             i: {
                 'id': r[0],
 #                'bday': r[1],
-                'gender': r[2],
-                'citizenship': r[3],
-                'member_since': r[4],
-                'member_until': r[5]
+                'gender': r[1],
+                'citizenship': r[2],
+                'member_since': r[3],
+                'member_until': r[4]
             } for i, r in enumerate(results)
         }
 

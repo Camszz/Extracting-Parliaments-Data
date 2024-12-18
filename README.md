@@ -3,11 +3,18 @@ This project provides notebooks, an SQL database_eu as well as a preliminary dat
 
 
 # How to install this package ?
-Create a conda environment using the following command : \
-`conda create --name <env> --file requirements.txt` \
-All required packages should be installed from the requirements.txt file.
+All required packages will be installed from the requirements.txt file automatically.
 
-Then, install the package in dev mode with the following command : \
+First, create a environment with python 3.12.7. You can do create one using conda : \
+`conda create -n <env_name> python=3.12.7`
+
+Then, activate the environment : \
+`conda activate <env_name>`
+
+Install the package in dev mode with the following command : \
+`python -m pip install -e .`
+
+And then, if you use a conda environment, to make sure the package is well loaded by conda, run the following command: \
 `conda develop .`
 
 # How to run this package ?

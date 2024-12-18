@@ -2,6 +2,7 @@ import pandas as pd
 from time import sleep
 import ast
 import logging
+import os
 
 # Set up the logger
 logger = logging.getLogger(__name__)
@@ -115,7 +116,11 @@ def process_MPsRaw(dicf_MPs_raw: dict[pd.DataFrame]):
     list_df_MPs = []
     for org, df in dicf_MPs_raw.items():
         list_df_MPs.append(globals()[f'process_M{org.upper()}PsRaw'](df))
-    pd.concat(list_df_MPs).to_csv("../data/output/postprocess/MPs_full.csv", index=False)
+    directory_path = "../data/output/postprocess"
+    if not os.path.exists(directory_path):
+        # If the directory does not exist, create it
+        os.makedirs(directory_path)
+    pd.concat(list_df_MPs).to_csv(directory_path + "/MPs_full.csv", index=False)
     logger.info('MPs processed')
     return
 

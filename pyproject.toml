@@ -8,12 +8,13 @@ authors = [
 ]
 description = "LegiScraper is a package made for scraping easily the data from various parliaments"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dynamic = ["dependencies"]
 
 [project.urls]
 Homepage = "https://github.com/Camszz/Extracting-Parliaments-Data"
@@ -21,3 +22,6 @@ Homepage = "https://github.com/Camszz/Extracting-Parliaments-Data"
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
