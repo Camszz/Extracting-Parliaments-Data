@@ -28,3 +28,7 @@ In a notebook, do the following :
     db = Database(config='database')
 
 Once you'll execute the above command, the Database class will automatically start scraping data while keeping you updated using the logger.
+
+CSV files will progressively be created in the "data/output" folder, before being post-processed and stored in the "data/output/postprocess" folder.
+
+These CSV files need to be manually imported into the database, for instance through the [DB Browser for SQLite](https://sqlitebrowser.org/dl/) app. A range of useful SQL queries are provided in the "database" folder.
