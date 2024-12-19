@@ -5,6 +5,8 @@ This project provides notebooks, an SQL database_eu as well as a preliminary dat
 # How to install this package ?
 All required packages will be installed from the requirements.txt file automatically.
 
+*Please make sure that you have conda-build installed on your machine (in the base environment is sufficient).*
+
 First, create a environment with python 3.12.7. You can do create one using conda : \
 `conda create -n <env_name> python=3.12.7`
 
